@@ -5,3 +5,10 @@ version = 3
 [[package]]
 name = "baby-stark"
 version = "0.1.0"
+dependencies = [
+ "baby-stark-math-lib",
+]
+
+[[package]]
+name = "baby-stark-math-lib"
+version = "0.1.0"

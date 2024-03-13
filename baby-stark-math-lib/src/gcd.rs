@@ -1,8 +1,13 @@
+// `gcd` permet d'obtenir le plus grand diviseur commun de deux nombres(entiers positifs);
 pub fn gcd(mut x : i32, mut y : i32) -> i32{
+    if x < 0 || y < 0 {
+        panic!("Tous les nombres doivent être positif");
+    }
+
     while y != 0 {
-        let temp = y; // 20, 5
-        y = x % y; //5, 0
-        x = temp; //20, 5
+        let temp = y;
+        y = x % y;
+        x = temp;
     }
     x.abs()
 }
@@ -24,6 +29,12 @@ mod tests{
     fn test_gcd(){
         assert_eq!(2, gcd(58, 28));
         assert_eq!(gcd(5, 20), 5);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_panic_gcd(){
+        gcd(-24, 20);
     }
 
     #[test]

@@ -1,4 +1,5 @@
 [workspace]
 members = [
-    "baby-stark"
+    "baby-stark",
+    "baby-stark-math-lib"
 ]
