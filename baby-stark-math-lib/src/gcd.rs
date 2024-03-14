@@ -1,5 +1,7 @@
-// `gcd` permet d'obtenir le plus grand diviseur commun de deux nombres(entiers positifs);
-pub fn gcd(mut x : i32, mut y : i32) -> i32{
+
+/// # GCD library
+/// `gcd` permet d'obtenir le plus grand diviseur commun de deux nombres(entiers positifs);
+pub fn gcd(mut x : i128, mut y : i128) -> i128{
     if x < 0 || y < 0 {
         panic!("Tous les nombres doivent être positif");
     }
@@ -12,7 +14,9 @@ pub fn gcd(mut x : i32, mut y : i32) -> i32{
     x.abs()
 }
 
-pub fn xgcd(a : i64, b : i64) -> (i64, i64, i64){
+/// # XGCD library
+/// `xgcd` permet d'obtenir l'extended euclidean algorithm pour avoir les coefficients de ...;
+pub fn xgcd(a : i128, b : i128) -> (i128, i128, i128){
     if a == 0 {
         (b, 0, 1)
     } else {

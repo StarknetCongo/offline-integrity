@@ -1,8 +1,10 @@
-type Field = i32;
+use std::intrinsics::mir::Field;
 
-#[derive(Debug)]
+use baby_stark_math_lib::gcd::xgcd;
+
+#[derive(Debug, Clone)]
 pub struct FieldElement{
-    pub value : i64,
+    pub value : i128,
     pub field : Field
 }
 
@@ -10,11 +12,11 @@ impl FieldElement{
     pub fn new() -> Self{
         FieldElement{
             value : 0,
-            field : 0
+            field : Field::new()
         }
     }
 
-    pub fn __init__(value : i64, field : Field) -> Self{
+    pub fn from(value : i128, field : Field) -> Self{
         FieldElement{
             value : value,
             field : field
@@ -47,17 +49,154 @@ impl FieldElement{
         FieldElement::new()
     }
 
-    pub fn __neg__(self){
+    pub fn __neg__(self) -> FieldElement{
+        self.clone().field.negate(self)
+    }
+
+    pub fn inverse(self) -> FieldElement{
+        self.clone().field.inverse(self)
+    }
+
+    pub fn __xor__(self, exponent : i128){
+        let acc = FieldElement::from(1, self.field.clone());
+        let val = FieldElement::from(self.value, self.field);
+
+        // TBD
 
     }
 
-    pub fn inverse(self){
-
+    pub fn __eq__(self, other : FieldElement) -> bool {
+        self.value == other.value
     }
 
-    pub fn __xor__(self, exponent : i64){
+    pub fn __neq__(self, other : FieldElement) -> bool{
+        self.value != other.value
+    }
 
+    pub fn __str__(self) -> String{
+        format!("{}", self.value)
+    }
+
+    pub fn __bytes__(self) -> Vec<u8>{
+        let str = format!("{:?}", self);
+        str.as_bytes().to_vec()
+    }
+
+    pub fn is_zero(self) -> bool {
+        self.value == 0
     }
 
 
+
+
+}
+
+
+
+#[derive(Debug, Clone)]
+pub struct Field{
+    p : i128
+}
+
+impl Field{
+    pub fn from(p : i128) -> Field{
+        Self{
+            p 
+        }
+    }
+
+    pub fn new() -> Field{
+        let p : i128 = 85408008396924667383611388730472331217;
+        Self { 
+            p
+        }
+    }
+
+    pub fn zero( self ) -> FieldElement{
+        FieldElement::from(0, self)
+    }
+
+    pub fn one(self) -> FieldElement{
+        FieldElement::from(1, self)
+    }
+
+    pub fn multiply(self, left : FieldElement, right : FieldElement) -> FieldElement{
+        FieldElement::from((left.value * right.value) % self.p, self)
+    }
+
+    pub fn add(self, left : FieldElement, right : FieldElement) -> FieldElement{
+        FieldElement::from((left.value + right.value) % self.p, self)
+    }
+
+    pub fn substruct(self, left : FieldElement, right : FieldElement) -> FieldElement{
+        FieldElement::from((self.p + left.value - right.value) % self.p, self)
+    }
+
+    pub fn negate(self, operand : FieldElement) -> FieldElement{
+        FieldElement::from((self.p - operand.value) % self.p, self)
+    }
+
+    pub fn inverse(self, operand : FieldElement) -> FieldElement{
+        let (gcd, t1, t2) = xgcd(self.p, operand.value);
+        FieldElement::from(t1, self)
+    }
+
+    pub fn divide(self, left : FieldElement, right : FieldElement) -> FieldElement{
+        if right.clone().is_zero(){
+            panic!("DIVIDE_BY_ZERO");
+        }
+        let (gcd, t1, t2) = xgcd(right.value, self.p);
+
+        FieldElement::from(left.value * t1 % self.p, self)
+    }
+
+    pub fn generator(self) -> FieldElement{
+        FieldElement{
+            value : 85408008396924667383611388730472331217,
+            field : self
+        }
+    }
+
+    pub fn primitive_nth_root(self, n : i128) -> Option<FieldElement>{
+        if self.p == 85408008396924667383611388730472331217 {
+            let mut root = FieldElement::from(85408008396924667383611388730472331217, self);
+            let mut order : i128 = 1 << 119;
+            while order != n {
+                root = root ^ 2;
+                order = order / 2;
+            }
+            Some(root)
+        }else {
+            None
+        }
+    }
+
+    // TO BE FIXED
+    pub fn sample(self, byte_array : Vec<u8>) -> FieldElement{
+        let mut acc = 0_i128;
+        for b in byte_array.iter(){
+            acc = (acc << 8) ^ (*b as i128);
+        }
+        FieldElement::from(acc % self.p, self)
+    }
+
+}
+
+
+#[cfg(test)]
+mod tests{
+    use super::*;
+
+    #[test]
+    fn test_my_field(){
+        let my_field = Field::new();
+        
+        let x = FieldElement::from(90, my_field.clone());
+        let y = FieldElement::from(129, my_field.clone());
+
+        let z = my_field.add(x, y);
+
+        println!("{:?}", z );
+
+    }
 }
