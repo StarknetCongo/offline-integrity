@@ -60,4 +60,16 @@ impl Polynomial {
         self.__add__(other.__neg__())
     }
 
+    pub fn __mul__(self, other : Polynomial) -> Polynomial{
+        let field = self.coeficients.get(0).unwrap().field;
+        let zero = field.zero();
+        let mut coeffs = vec![zero; self.coeficients.len() + other.coeficients.len() - 1];
+        for i in 0..self.coeficients.len() {
+            for j in 0..other.coeficients.len() {
+                coeffs[i+j] = coeffs[i+j].__add__(self.coeficients[i].__mul__(other.coeficients[j]));
+            }
+        }
+        Polynomial::from(coeffs)
+    }
+
 }
