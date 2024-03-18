@@ -56,5 +56,8 @@ impl Polynomial {
 
     }
 
+    pub fn __sub__(self, other : Polynomial) -> Polynomial{
+        self.__add__(other.__neg__())
+    }
 
 }
