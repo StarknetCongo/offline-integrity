@@ -56,5 +56,15 @@ impl Polynomial {
 
     }
 
+    pub fn __eq__(self, other : Polynomial) -> bool{
+        if self.degree() != other.degree() {
+            return false;
+        }
+        if self.degree() == -1 {
+            return true;
+        }
+        self.coeficients.iter().zip(other.coeficients.iter()).all(|(a, b)| a == b)
+    }
 
+    
 }
