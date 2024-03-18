@@ -66,5 +66,11 @@ impl Polynomial {
         self.coeficients.iter().zip(other.coeficients.iter()).all(|(a, b)| a == b)
     }
 
+    pub fn __neq__(self, other : Polynomial) -> bool{
+        !self.__eq__(other)
+    }
+
+    
+
     
 }
