@@ -70,15 +70,14 @@ impl Polynomial {
         !self.__eq__(other)
     }
 
-    pub fn __is_zero__(self) -> bool{
+    pub fn is_zero(self) -> bool{
         if self.degree() == -1 {
             return true;
         }
         return false;
     }
 
-    
-    
-
-    
+    pub fn leading_coefficient(self){
+        self.coeficients[self.degree()]
+    }
 }
