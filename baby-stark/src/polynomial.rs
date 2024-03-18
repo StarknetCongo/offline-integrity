@@ -70,6 +70,14 @@ impl Polynomial {
         !self.__eq__(other)
     }
 
+    pub fn __is_zero__(self) -> bool{
+        if self.degree() == -1 {
+            return true;
+        }
+        return false;
+    }
+
+    
     
 
     
