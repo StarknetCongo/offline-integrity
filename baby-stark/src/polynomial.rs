@@ -56,5 +56,28 @@ impl Polynomial {
 
     }
 
+    pub fn __eq__(self, other : Polynomial) -> bool{
+        if self.degree() != other.degree() {
+            return false;
+        }
+        if self.degree() == -1 {
+            return true;
+        }
+        self.coeficients.iter().zip(other.coeficients.iter()).all(|(a, b)| a == b)
+    }
 
+    pub fn __neq__(self, other : Polynomial) -> bool{
+        !self.__eq__(other)
+    }
+
+    pub fn is_zero(self) -> bool{
+        if self.degree() == -1 {
+            return true;
+        }
+        return false;
+    }
+
+    pub fn leading_coefficient(self){
+        self.coeficients[self.degree()]
+    }
 }
