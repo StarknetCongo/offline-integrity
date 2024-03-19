@@ -3,7 +3,7 @@ use baby_stark_math_lib;
 use crate::field::FieldElement;
 
 mod field;
-mod polynomial;
+// mod polynomial;
 
 fn main() {
     println!("Hello, world!");
