@@ -43,6 +43,7 @@ impl FieldElement{
         }
     }
 
+    // TO BE IMPLEMENTED
     pub fn __truediv__(self, right : FieldElement) -> FieldElement{
         FieldElement::new()
     }
@@ -59,7 +60,8 @@ impl FieldElement{
         let acc = FieldElement::from(1, self.field.clone());
         let val = FieldElement::from(self.value, self.field);
 
-        // TBD
+        // TBD 
+        
 
     }
 
@@ -179,6 +181,16 @@ impl Field{
         FieldElement::from(acc % self.p, self)
     }
 
+}
+
+
+pub fn vector_multiplication_field_scalar ( vector : &Vec<FieldElement>, scalar : i128) -> Vec<FieldElement>{
+    let mut res : Vec<FieldElement> = vec![];
+    for field_element in vector.iter() {
+        res.push(FieldElement::from(field_element.value * scalar, vector.get(0).unwrap().field));
+    }
+
+    res
 }
 
 
