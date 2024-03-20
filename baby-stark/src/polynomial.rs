@@ -2,7 +2,7 @@ use baby_stark_math_lib::linear_multiiplication::vector_scalar_multiplication;
 use core::num;
 use std::cmp::max;
 
-use crate::field::{self, vector_multiplication_field_scalar, FieldElement};
+use crate::field::{self, vector_multiplication_field_scalar, Field, FieldElement};
 
 pub fn multi_poly_and_scalar(poly : Polynomial, scalar : i128) -> Polynomial{
     Polynomial{
@@ -201,4 +201,15 @@ impl Polynomial {
         }
         acc
     }
+
+    pub fn evaluate_domain(self, domain : Vec<FieldElement>) -> Vec<FieldElement>{
+        let mut res_field_elts : Vec<FieldElement> = vec![];
+
+        for element in domain.iter() {
+            res_field_elts.push(self.evaluate(&element));
+        } 
+
+        res_field_elts
+    }
+
 }
