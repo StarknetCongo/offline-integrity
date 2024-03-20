@@ -179,4 +179,14 @@ impl Polynomial {
         // TBD
         Polynomial::from(vec![FieldElement::new()])
     }
+
+    pub fn evaluate(&self, point: &FieldElement)->FieldElement{
+        let mut xi = FieldElement::one();
+        let mut value = FieldElement::zero();
+        for c in &self.coeficients{
+            value = value.__add__(c.__mul__(xi));
+            xi = xi.__mul_(point);
+        }
+        return value;
+    }
 }
