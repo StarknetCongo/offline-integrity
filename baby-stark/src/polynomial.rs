@@ -101,8 +101,8 @@ impl Polynomial {
         let mut xi = FieldElement::one();
         let mut value = FieldElement::zero();
         for c in &self.coeficients{
-            value = value + (*c * xi);
-            xi = xi * *point;
+            value = value.__add__(c.__mul__(xi));
+            xi = xi.__mul_(point);
         }
         return value;
     }
