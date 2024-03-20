@@ -181,11 +181,12 @@ impl Polynomial {
     }
 
     pub fn evaluate(&self, point: &FieldElement)->FieldElement{
-        let mut xi = FieldElement::one();
-        let mut value = FieldElement::zero();
+        let field = point.field;
+        let mut xi = field.one();
+        let mut value = field.zero();
         for c in &self.coeficients{
             value = value.__add__(c.__mul__(xi));
-            xi = xi.__mul_(point);
+            xi = xi.__mul__(*point);
         }
         return value;
     }
