@@ -177,7 +177,27 @@ impl Polynomial {
 
     pub fn __xor__(self, exponent : i128) -> Polynomial {
         // TBD
-        Polynomial::from(vec![FieldElement::new()])
+        if self.clone().is_zero() {
+            let coefficients : Vec<FieldElement> = vec![];
+            return Polynomial::from(coefficients);
+        }
+
+        let coefficients : Vec<FieldElement> = vec![self.coeficients.get(0).unwrap().field.one()];
+        if exponent == 0_i128 {
+            return Polynomial::from(coefficients.clone());
+        }
+
+        let mut acc = Polynomial::from(coefficients);
+
+        let exponent_bin = format!("{:b}", exponent);
+
+        for i in (0..exponent_bin.len()).rev() {
+            acc = acc.clone().__mul__(acc);
+            if (1 << i) & exponent != 0 {
+                acc = acc.clone().__mul__(self.clone());
+            }
+        }
+        acc
     }
 
     pub fn evaluate(&self, point: &FieldElement)->FieldElement{
@@ -201,5 +221,19 @@ impl Polynomial {
         res_field_elts
     }
 
-    
+    pub fn scale ( self, factor : i128) -> Polynomial{
+
+        // return Polynomial([(factor^i) * self.coefficients[i] for i in range(len(self.coefficients))])
+        let mut new_coefficients : Vec<FieldElement> = vec![];
+        let field = self.coeficients.get(0).unwrap().field;
+        let mut i = 0;
+        for coefficient in self.coeficients.iter() {            
+            new_coefficients.push(FieldElement::from(factor ^ i, field));
+            i += 1;
+        }
+
+        Polynomial::from(new_coefficients)
+    }
+
+
 }
