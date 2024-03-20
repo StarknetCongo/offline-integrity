@@ -190,4 +190,15 @@ impl Polynomial {
         }
         return value;
     }
+
+    pub fn zerofier_domain(domain: &[FieldElement]) -> Polynomial {
+        let field = domain[0].field.clone();
+        let x = Polynomial::from(vec![field.zero(), field.one()]);
+        let mut acc = Polynomial::from(vec![field.one()]);
+        for d in domain {
+            let poly_d = Polynomial::from(vec![d.clone()]);
+            acc = acc.__mul__(x.clone().__sub__(poly_d));
+        }
+        acc
+    }
 }
