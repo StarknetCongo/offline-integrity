@@ -96,4 +96,14 @@ impl Polynomial {
     pub fn leading_coefficient(self){
         self.coeficients[self.degree()]
     }
+
+    pub fn evaluate(&self, point: &FieldElement)->FieldElement{
+        let mut xi = FieldElement::one();
+        let mut value = FieldElement::zero();
+        for c in &self.coeficients{
+            value = value + (*c * xi);
+            xi = xi * *point;
+        }
+        return value;
+    }
 }
