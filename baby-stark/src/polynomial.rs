@@ -212,22 +212,23 @@ impl Polynomial {
     }
 
 
-    pub fn interpolate_domain(domain : [FieldElement],values : [FieldElement]) ->Polynomial{
-        assert_eq(domain.len() == values.len(),"number of elements in domain does not match number of values -- cannot interpolate");
-        assert(!domain.is_empty(),"cannot interpolate between zero points");
-        let field = domain[0].clone();
-        let mut x = Polynomial {coefficients : vec![filed.zero(), field.one()]};
-        let mut acc = Polynomial { coefficients : Vec::new() };
+    pub fn interpolate_domain(domain : Vec<FieldElement>,values : Vec<FieldElement>) ->Polynomial{
+        assert_eq!(domain.len() , values.len(),"number of elements in domain does not match number of values -- cannot interpolate");
+        assert!(!domain.is_empty(),"cannot interpolate between zero points");
+        let field = domain[0].clone().field;
+
+        let  x  = Polynomial::from (vec![field.zero(), field.one()]);
+        let mut acc = Polynomial::from( [].to_vec() );
         for i in 0..domain.len(){
-            let mut prod = Polynomial {coefficients :vec![values[i].clone()]};
+            let mut prod = Polynomial::from( vec![values[i].clone()]);
             for j in 0..domain.len(){
                 if j == i{
                     continue;
                 }
-                //prod = prod * (x.clone() - Polynomial {coefficients : vec![domain[j].clone()]}) * Polynomial{ coefficients:vec![(domain[i] - domain[j]).inverse()]};
-                prod = prod.__mul_(x.clone().__sub__(Polynomial {coefficients : vec![domain[j].clone()]})).__mul_(Polynomial{coefficients : vec![domain[i].__sub__(domain[j]).inverse()]});
+                prod = prod.__mul__(x.clone().__sub__( Polynomial ::from( vec![domain[j].clone()])))
+                .__mul__(Polynomial::from( vec![(domain[i].__sub__(domain[j])).inverse()]));
             }
-            acc = acc + prod;
+            acc = acc.__add__(prod);
         }
         return acc;
     }
