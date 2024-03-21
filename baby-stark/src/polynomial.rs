@@ -237,3 +237,15 @@ impl Polynomial {
 
 
 }
+
+
+#[cfg(test)]
+mod tests{
+    #[test]
+    pub fn test_is_empty_vec(){
+        let my_vec : Vec<i32> = vec![];
+        if my_vec.is_empty() {
+            println!("Everything is good");
+        }
+    }
+}

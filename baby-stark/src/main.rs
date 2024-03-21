@@ -4,6 +4,7 @@ use crate::field::FieldElement;
 
 mod field;
 mod polynomial;
+mod mpolynomial;
 
 fn main() {
     println!("Hello, world!");
