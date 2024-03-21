@@ -247,3 +247,4 @@ impl Polynomial {
         Polynomial::from(new_coefficients)
     }
 }
+

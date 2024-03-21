@@ -157,29 +157,33 @@ impl Field{
         }
     }
 
-    // TBD
-    // pub fn primitive_nth_root(self, n : i128) -> Option<FieldElement>{
-    //     if self.p == 85408008396924667383611388730472331217 {
-    //         let mut root = FieldElement::from(85408008396924667383611388730472331217, self);
-    //         let mut order : i128 = 1 << 119;
-    //         while order != n {
-    //             root = root ^ 2;
-    //             order = order / 2;
-    //         }
-    //         Some(root)
-    //     }else {
-    //         None
-    //     }
-    // }
+    // done
+    pub fn primitive_nth_root(self, n : i128) -> Option<FieldElement>{
+        if self.p == 85408008396924667383611388730472331217 {
+            if !(n <= 1 << 119 && (n & (n-1)) == 0) {
+                println!("Field does not have nth root of unity where n > 2^119 or not power of two.")
+            }
+            let mut root = FieldElement::from(85408008396924667383611388730472331217, self);
+            let mut order : i128 = 1 << 119;
+            while order != n {
+                root = root ^ 2;
+                order = order / 2;
+            }
+            Some(root)
+        }else {
+            None
+        }
+    }
 
-    // TO BE FIXED
-    pub fn sample(self, byte_array : Vec<u8>) -> FieldElement{
-        let mut acc = 0_i128;
-        for b in byte_array.iter(){
-            acc = (acc << 8) ^ (acc as i128);
+    // FIXED
+    pub fn sample(self, byte_array: Vec<u8>) -> FieldElement {
+        let mut acc: i128 = 0;
+        for &b in byte_array.iter() {
+            acc = (acc << 8) ^ b as i128;
         }
         FieldElement::from(acc % self.p, self)
     }
+    
 
 }
 
