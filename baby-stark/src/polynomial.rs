@@ -174,9 +174,14 @@ impl Polynomial {
             None => Err("COULD_NOT_GET_MODULO".to_string())
         }
     }
+   
 
-    pub fn __xor__(self, exponent : i128) -> Polynomial {
-        // TBD
-        Polynomial::from(vec![FieldElement::new()])
+    fn test_colinearity(points: &[(i128, i128)]) -> bool {
+        let domain = points.iter().map(|&(x, _)| x).collect::<Vec<_>>();
+        let values = points.iter().map(|&(_, y)| y).collect::<Vec<_>>();
+        let polynomial = Polynomial::interpolate_domain(&domain, &values);// it depends on the interpolate_domain function done by Justin Fimbo
+        polynomial.degree() <= 1
     }
+
+
 }
