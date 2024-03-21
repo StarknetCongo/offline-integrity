@@ -166,7 +166,7 @@ impl Field{
             let mut root = FieldElement::from(85408008396924667383611388730472331217, self);
             let mut order : i128 = 1 << 119;
             while order != n {
-                root = root ^ 2;
+                root = root.__mul__(root);
                 order = order / 2;
             }
             Some(root)
