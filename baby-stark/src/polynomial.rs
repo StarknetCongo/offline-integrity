@@ -211,6 +211,39 @@ impl Polynomial {
         return value;
     }
 
+
+    pub fn interpolate_domain(domain : Vec<FieldElement>,values : Vec<FieldElement>) ->Polynomial{
+        assert_eq!(domain.len() , values.len(),"number of elements in domain does not match number of values -- cannot interpolate");
+        assert!(!domain.is_empty(),"cannot interpolate between zero points");
+        let field = domain[0].clone().field;
+
+        let  x  = Polynomial::from (vec![field.zero(), field.one()]);
+        let mut acc = Polynomial::from( [].to_vec() );
+        for i in 0..domain.len(){
+            let mut prod = Polynomial::from( vec![values[i].clone()]);
+            for j in 0..domain.len(){
+                if j == i{
+                    continue;
+                }
+                prod = prod.__mul__(x.clone().__sub__( Polynomial ::from( vec![domain[j].clone()])))
+                .__mul__(Polynomial::from( vec![(domain[i].__sub__(domain[j])).inverse()]));
+            }
+            acc = acc.__add__(prod);
+        }
+        return acc;
+    }
+  
+    pub fn zerofier_domain(domain: &[FieldElement]) -> Polynomial {
+        let field = domain[0].field.clone();
+        let x = Polynomial::from(vec![field.zero(), field.one()]);
+        let mut acc = Polynomial::from(vec![field.one()]);
+        for d in domain {
+            let poly_d = Polynomial::from(vec![d.clone()]);
+            acc = acc.__mul__(x.clone().__sub__(poly_d));
+        }
+        acc
+    }
+
     pub fn evaluate_domain(self, domain : Vec<FieldElement>) -> Vec<FieldElement>{
         let mut res_field_elts : Vec<FieldElement> = vec![];
 
@@ -220,6 +253,7 @@ impl Polynomial {
 
         res_field_elts
     }
+
 
     pub fn scale ( self, factor : i128) -> Polynomial{
 
@@ -234,8 +268,6 @@ impl Polynomial {
 
         Polynomial::from(new_coefficients)
     }
-
-
 }
 
 
