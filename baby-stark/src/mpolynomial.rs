@@ -16,6 +16,40 @@ impl MPolynomial {
             dictionary: my_hash_map,
         }
     }
+    use std::collections::HashMap;
+
+struct MPolynomial {
+    dictionary: HashMap<Vec<i32>, f64>,
+}
+
+impl MPolynomial {
+    fn is_zero(&self) -> bool {
+        if self.dictionary.is_empty() {
+            return true;
+        } else {
+            for &v in self.dictionary.values() {
+                if !v.is_zero() {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+}
+
+fn variables(num_variables: usize, field: f64) -> Vec<MPolynomial> {
+    let mut variables = Vec::new();
+    for i in 0..num_variables {
+        let mut exponent = vec![0; i];
+        exponent.push(1);
+        exponent.extend(vec![0; num_variables - i - 1]);
+        let mut dictionary = HashMap::new();
+        dictionary.insert(exponent.clone(), field);
+        variables.push(MPolynomial { dictionary });
+    }
+    variables
+}
+
 }
 
 #[cfg(test)]
