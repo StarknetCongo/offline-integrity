@@ -16,6 +16,19 @@ impl MPolynomial {
             dictionary: my_hash_map,
         }
     }
+   
+    pub fn is_zero(&self) -> bool {
+        if self.dictionary.is_empty() {
+            return true;
+        } else {
+            for &v in self.dictionary.values() {
+                if !v.is_zero() {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
 }
 
 #[cfg(test)]
