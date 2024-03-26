@@ -2,7 +2,7 @@ use baby_stark_math_lib::linear_multiiplication::vector_scalar_multiplication;
 use core::num;
 use std::cmp::max;
 
-use crate::field::{self, vector_multiplication_field_scalar, FieldElement};
+use crate::field::{self, vector_multiplication_field_scalar, Field, FieldElement};
 
 pub fn multi_poly_and_scalar(poly : Polynomial, scalar : i128) -> Polynomial{
     Polynomial{
@@ -176,15 +176,121 @@ impl Polynomial {
     }
    
 
-
    pub fn test_colinearity(points: [FieldElement]) -> bool {
         let domain: Vec<_> = points.iter().map(|point| point.clone()).collect();
         let values: Vec<_> = points.iter().map(|point| point.clone()).collect();
         let polynomial = Polynomial::interpolate_domain(domain, values);
         polynomial.degree() <= 1
+  }
+  
+    pub fn __xor__(self, exponent : i128) -> Polynomial {
+        // TBD
+        if self.clone().is_zero() {
+            let coefficients : Vec<FieldElement> = vec![];
+            return Polynomial::from(coefficients);
+        }
+
+        let coefficients : Vec<FieldElement> = vec![self.coeficients.get(0).unwrap().field.one()];
+        if exponent == 0_i128 {
+            return Polynomial::from(coefficients.clone());
+        }
+
+        let mut acc = Polynomial::from(coefficients);
+
+        let exponent_bin = format!("{:b}", exponent);
+
+        for i in (0..exponent_bin.len()).rev() {
+            acc = acc.clone().__mul__(acc);
+            if (1 << i) & exponent != 0 {
+                acc = acc.clone().__mul__(self.clone());
+            }
+        }
+        acc
+    }
+
+    pub fn evaluate(&self, point: &FieldElement)->FieldElement{
+        let field = point.field;
+        let mut xi = field.one();
+        let mut value = field.zero();
+        for c in &self.coeficients{
+            value = value.__add__(c.__mul__(xi));
+            xi = xi.__mul__(*point);
+        }
+        return value;
+    }
+
+
+    pub fn interpolate_domain(domain : Vec<FieldElement>,values : Vec<FieldElement>) ->Polynomial{
+        assert_eq!(domain.len() , values.len(),"number of elements in domain does not match number of values -- cannot interpolate");
+        assert!(!domain.is_empty(),"cannot interpolate between zero points");
+        let field = domain[0].clone().field;
+
+        let  x  = Polynomial::from (vec![field.zero(), field.one()]);
+        let mut acc = Polynomial::from( [].to_vec() );
+        for i in 0..domain.len(){
+            let mut prod = Polynomial::from( vec![values[i].clone()]);
+            for j in 0..domain.len(){
+                if j == i{
+                    continue;
+                }
+                prod = prod.__mul__(x.clone().__sub__( Polynomial ::from( vec![domain[j].clone()])))
+                .__mul__(Polynomial::from( vec![(domain[i].__sub__(domain[j])).inverse()]));
+            }
+            acc = acc.__add__(prod);
+        }
+        return acc;
+    }
+  
+    pub fn zerofier_domain(domain: &[FieldElement]) -> Polynomial {
+        let field = domain[0].field.clone();
+        let x = Polynomial::from(vec![field.zero(), field.one()]);
+        let mut acc = Polynomial::from(vec![field.one()]);
+        for d in domain {
+            let poly_d = Polynomial::from(vec![d.clone()]);
+            acc = acc.__mul__(x.clone().__sub__(poly_d));
+        }
+        acc
+    }
+
+    pub fn evaluate_domain(self, domain : Vec<FieldElement>) -> Vec<FieldElement>{
+        let mut res_field_elts : Vec<FieldElement> = vec![];
+
+        for element in domain.iter() {
+            res_field_elts.push(self.evaluate(&element));
+        } 
+
+        res_field_elts
+    }
+
+
+    pub fn scale ( self, factor : i128) -> Polynomial{
+
+        // return Polynomial([(factor^i) * self.coefficients[i] for i in range(len(self.coefficients))])
+        let mut new_coefficients : Vec<FieldElement> = vec![];
+        let field = self.coeficients.get(0).unwrap().field;
+        let mut i = 0;
+        for coefficient in self.coeficients.iter() {            
+            new_coefficients.push(FieldElement::from(factor ^ i, field));
+            i += 1;
+        }
+
+        Polynomial::from(new_coefficients)
+
     }
     
     
 
 
+}
+
+
+#[cfg(test)]
+mod tests{
+    #[test]
+    pub fn test_is_empty_vec(){
+        let my_vec : Vec<i32> = vec![];
+        if my_vec.is_empty() {
+            println!("Everything is good");
+        }
+    }
 }
