@@ -174,7 +174,15 @@ impl Polynomial {
             None => Err("COULD_NOT_GET_MODULO".to_string())
         }
     }
+   
 
+   pub fn test_colinearity(points: [FieldElement]) -> bool {
+        let domain: Vec<_> = points.iter().map(|point| point.clone()).collect();
+        let values: Vec<_> = points.iter().map(|point| point.clone()).collect();
+        let polynomial = Polynomial::interpolate_domain(domain, values);
+        polynomial.degree() <= 1
+  }
+  
     pub fn __xor__(self, exponent : i128) -> Polynomial {
         // TBD
         if self.clone().is_zero() {
@@ -267,7 +275,12 @@ impl Polynomial {
         }
 
         Polynomial::from(new_coefficients)
+
     }
+    
+    
+
+
 }
 
 
